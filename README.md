@@ -9,8 +9,6 @@
 1) `Android studio should be installed` (Tested android studio version is `3.6.1`)
 2) `Java should be installed` (Tested java version is `1.8`)
 
-### IOS
-
 ## Development tips
 1) `adb devices` to see the list of devices which are connected to the system. (Note: `adb drivers` should be installed, if not available)
 2) Enable USB debugging mode in the developer options of the mobile devices, which allows to manage the mobile device through `adb` to `install apk`, `hot reload apk` and ... (Note: You have to make the developer options enable, to enable this one go to `settings --> about --> build number (click on three times)`)
@@ -20,7 +18,7 @@
 1) launch http://localhost:8081/debugger-ui/ in the browser(chrome)
 2) switch to node server terminal, then `press d`, you can start debugging your app as normal javascript application.
 
-Observations::
+### Small brief
 
 1. First step is to use react-native-video to play video.
 2. In order to give a feedback on currently running feedback.
@@ -32,6 +30,6 @@ Observations::
         Stop video and draw at specific places on canvas so that correction in video can be made easy to understad.
         When user add feedback by drawing on the canvas.There is  a save button adjacent to play and pause button when helps in saving canvas as a photoand also it gets saved in state with timestamp like {starttime:HH:MM:SS:microsec,endtime:HH:MM:SS:microsec,path:""}.
 
-#Future scope
+### Future scope
 At the end of the video we can save all the text feedback added by user in .SRT file in order to show it like subtitles where mistake was.
 react-native-screen-recorder ibrary is also there to capture the whole session of checking the video .
