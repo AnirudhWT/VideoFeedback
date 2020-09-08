@@ -1,7 +1,8 @@
 
 import React, { Component } from 'react';
 import {
-  Platform,
+  Keyboard,
+  Alert,
   StyleSheet,
   Text,
   View,
@@ -16,9 +17,10 @@ import Video from 'react-native-video';
 import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ScreenRecorderManager from 'react-native-screen-recorder';
-
+import KeyboardListener from 'react-native-keyboard-listener';
 
 export default class App extends Component {
+  KeyboardStatus=false;
   constructor(props) {
     super(props);
 
@@ -37,12 +39,26 @@ export default class App extends Component {
       subtitles:[],
       feedbackstart:false,
       feedbacktext:"",
-      canvasFeedback:[]
+      canvasFeedback:[],
+      KeyboardStatus:false
     };
-
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
     this.video = Video;
   }
+  
+  _keyboardDidShow () {
+   
+      this.KeyboardStatus= true;
+  
+  };
 
+  _keyboardDidHide () {
+    this.KeyboardStatus= false;
+  };
+ 
+
+  
   // load video event
   onLoad = (data) => {
     this.setState({ duration: data.duration });
@@ -130,10 +146,13 @@ export default class App extends Component {
         let date = new Date();
         this._sketchCanvas.save('png', true, '/Videoanalytics', 
         'sample'+parseInt(Math.random()*1000),
-        true, true, false)
+        true, true, false);
+        this._sketchCanvas.clear()
   }
 
   saveCanvasFeedback=(path)=>{
+    Alert.alert(`Saved to  ${path}`);
+
     let hour=parseInt(parseInt(this.state.currentTime/60)/60);
     let minute=parseInt(this.state.currentTime/60);
     let seconds=parseInt(this.state.currentTime);
@@ -145,6 +164,7 @@ export default class App extends Component {
 
 
   render() {
+    console.log(this.KeyboardStatus)
     const flexCompleted = this.getCurrentTimePercentage() * 100;
     return (<React.Fragment>
       <View style={styles.container}>
@@ -171,8 +191,8 @@ export default class App extends Component {
             repeat={false}
           />
         </TouchableWithoutFeedback>
-        <View style={{borderWidth:2,position:"absolute",left:0,top:160,width:400,height:200,zIndex:22}}>
-        <View style={{borderWidth:2,justifyContent:"center",alignItems:"center"}}>
+        <View style={{borderWidth:2,position:"absolute",left:0,top:this.state.KeyboardStatus?20:170,width:410,height:200,zIndex:22}}>
+        <View style={{justifyContent:"center",alignItems:"center"}}>
        {!this.state.feedbackstart?<TouchableOpacity onPress={()=>{
          this.setState({feedbackstart:true})
         }}><Text>Add feedback</Text></TouchableOpacity>:
@@ -186,7 +206,7 @@ export default class App extends Component {
         <View style={{borderWidth:1,borderColor:"Red"}}>
         <SketchCanvas
             ref={ref => this._sketchCanvas = ref}
-            style={{width:200,height:150,zIndex:22}}
+            style={{width:200,height:170,zIndex:22}}
             strokeColor={'red'}
             strokeWidth={5}
             onSketchSaved={(success,path)=>{
@@ -217,7 +237,7 @@ export default class App extends Component {
                 </View>
                 <View style={styles.playControl}>
                   <TouchableOpacity onPress={() => this.onPressBtnPlay()}><Icon name={this.state.pausedText}/></TouchableOpacity>
-                  <View><TouchableOpacity onPress={this.saveCanvasFile}><Text>save</Text></TouchableOpacity></View>
+                  <View><TouchableOpacity onPress={this.saveCanvasFile} style={{backgroundColor:"darkgreen",paddingRight:10,paddingLeft:10}} ><Text style={{color:"white"}}>save</Text></TouchableOpacity></View>
                 </View>
                 <View style={styles.resizeModeControl}>
                   <Picker
@@ -248,11 +268,12 @@ export default class App extends Component {
 
         
       </View>
-      <View>
-      <TouchableOpacity onPress={()=>{ScreenRecorderManager.start()}}><Text>start</Text></TouchableOpacity>
-      <TouchableOpacity onPress={()=>{ScreenRecorderManager.stop()}}><Text>stop</Text></TouchableOpacity>
+      <View style={{backgroundColor:"lightgreen",flexDirection:"row",justifyContent:"space-around"}}>
+      <TouchableOpacity style={{backgroundColor:"darkgreen",paddingRight:10,paddingLeft:10}} onPress={()=>{ScreenRecorderManager.start()}}><Text style={{color:"white"}} >Start Recording</Text></TouchableOpacity>
+      <TouchableOpacity style={{backgroundColor:"darkgreen",paddingRight:10,paddingLeft:10}} onPress={()=>{ScreenRecorderManager.stop()}}><Text style={{color:"white"}}  >Stop Recording</Text></TouchableOpacity>
 
     </View>
+    
     </React.Fragment>
     );
   }
@@ -263,7 +284,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'lightgreen',
   },
   fullScreen: {
     position: 'absolute',
@@ -301,7 +322,7 @@ const styles = StyleSheet.create({
   playControl: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
   },
   resizeModeControl: {
     flex: 1,
