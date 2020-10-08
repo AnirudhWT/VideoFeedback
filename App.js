@@ -72,6 +72,7 @@ export default class App extends Component {
   // video ends
   onEnd = () => {
     this.setState({ paused: true, pausedText: 'play'})
+    // Add code here to save whole feedback and marking data in a file when the video ends 
   };
 
   getCurrentTimePercentage() {
